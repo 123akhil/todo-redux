@@ -2,7 +2,7 @@ import "./App.css";
 import Form from "./Components/Form";
 function App() {
   return (
-    <div className="App">
+    <div className="app">
       <div className="app_nav">
         <h1>Todo Manager</h1>
       </div>

@@ -1,19 +1,32 @@
 import React from "react";
 import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { addTodo, deleteAllCompletedTodo } from "../Redux/actions/actions";
+import TodoCard from "./TodoCard";
 
 const Form = () => {
   const [newTodo, setNewTodo] = useState({ title: "", description: "" });
-
+  const dispatch = useDispatch();
+  const { todos } = useSelector((state) => state.todos);
   const handleInput = ({ target }) => {
     const { name, value } = target;
 
     setNewTodo((prev) => ({ ...prev, [name]: value }));
   };
+
+  const remainingTodos = todos?.filter((todo) => !todo.completed);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    dispatch(addTodo(newTodo));
+    setNewTodo({ title: "", description: "" });
+  };
+
   return (
     <div className="form__container">
       <div className="form__left">
         <div className="form__right">
-          <form>
+          <form onSubmit={handleSubmit}>
             <input
               type="input"
               name="title"
@@ -36,7 +49,7 @@ const Form = () => {
               </div>
             ) : null}
 
-            <div clasName="form__group">
+            <div className="form__group">
               <button className="btn" type="submit">
                 Add Todo
               </button>
@@ -44,16 +57,24 @@ const Form = () => {
           </form>
 
           <div className="form__remaining">
-            <p>Remaining Todos: 0</p>
+            <p>Remaining Todos: {remainingTodos.length}</p>
           </div>
           <div className="form__buttons">
-            <button className="btn" type="submit">
+            <button
+              className="btn"
+              type="submit"
+              onClick={() => dispatch(deleteAllCompletedTodo())}
+            >
               Delete all Completed Todos
             </button>
           </div>
         </div>
       </div>
-      <div className="form__right"></div>
+      <div className="form__right">
+        {todos.map((todo) => (
+          <TodoCard key={todo.id} todo={todo} />
+        ))}
+      </div>
     </div>
   );
 };
